@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" role="img" aria-label="Public leaderboard AUC by submission, rising from 0.731 to 0.862">
+<rect width="900" height="400" fill="#1a1a19"/>
+<line x1="56" y1="336.0" x2="860" y2="336.0" stroke="#2b2b29" stroke-width="1"/>
+<text x="44" y="340.0" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="12" fill="#c3c2b7">0.70</text>
+<line x1="56" y1="252.7" x2="860" y2="252.7" stroke="#2b2b29" stroke-width="1"/>
+<text x="44" y="256.7" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="12" fill="#c3c2b7">0.75</text>
+<line x1="56" y1="169.3" x2="860" y2="169.3" stroke="#2b2b29" stroke-width="1"/>
+<text x="44" y="173.3" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="12" fill="#c3c2b7">0.80</text>
+<line x1="56" y1="86.0" x2="860" y2="86.0" stroke="#2b2b29" stroke-width="1"/>
+<text x="44" y="90.0" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="12" fill="#c3c2b7">0.85</text>
+<path d="M 56.0 284.3 L 216.8 147.7 L 377.6 142.7 L 538.4 141.0 L 699.2 109.3 L 860.0 66.0" fill="none" stroke="#3987e5" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="56.0" cy="284.3" r="6.5" fill="#1a1a19"/>
+<circle cx="56.0" cy="284.3" r="4.5" fill="#3987e5"/>
+<text x="56.0" y="308.3" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="600" fill="#ffffff">0.731</text>
+<text x="56.0" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">resnet18</text>
+<circle cx="216.8" cy="147.7" r="6.5" fill="#1a1a19"/>
+<circle cx="216.8" cy="147.7" r="4.5" fill="#3987e5"/>
+<text x="216.8" y="131.7" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="600" fill="#ffffff">0.813</text>
+<text x="216.8" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">convnext_tiny</text>
+<circle cx="377.6" cy="142.7" r="6.5" fill="#1a1a19"/>
+<circle cx="377.6" cy="142.7" r="4.5" fill="#3987e5"/>
+<text x="377.6" y="126.7" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="600" fill="#ffffff">0.816</text>
+<text x="377.6" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">+ ensemble</text>
+<circle cx="538.4" cy="141.0" r="6.5" fill="#1a1a19"/>
+<circle cx="538.4" cy="141.0" r="4.5" fill="#3987e5"/>
+<text x="538.4" y="125.0" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="600" fill="#ffffff">0.817</text>
+<text x="538.4" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">+ v3 labels</text>
+<circle cx="699.2" cy="109.3" r="6.5" fill="#1a1a19"/>
+<circle cx="699.2" cy="109.3" r="4.5" fill="#3987e5"/>
+<text x="699.2" y="93.3" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="600" fill="#ffffff">0.836</text>
+<text x="699.2" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">+ strong aug</text>
+<circle cx="860.0" cy="66.0" r="8" fill="#1a1a19"/>
+<circle cx="860.0" cy="66.0" r="6" fill="#3987e5"/>
+<text x="860.0" y="50.0" text-anchor="middle" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="14" font-weight="700" fill="#3987e5">0.862</text>
+<text x="860.0" y="362.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#c3c2b7">+ ordering fix</text>
+<line x1="56" y1="336.0" x2="860" y2="336.0" stroke="#2b2b29" stroke-width="1"/>
+</svg>

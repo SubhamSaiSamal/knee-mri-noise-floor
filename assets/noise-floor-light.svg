@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" role="img" aria-label="Macro-AUC delta per experiment against the 0.017 noise floor">
+<rect width="900" height="470" fill="#fcfcfb"/>
+<rect x="581.1" y="20" width="172.8" height="430" fill="#2a78d6" opacity="0.08"/>
+<line x1="581.1" y1="20" x2="581.1" y2="450" stroke="#e7e6e2" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="753.9" y1="20" x2="753.9" y2="450" stroke="#e7e6e2" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="667.5" y1="20" x2="667.5" y2="450" stroke="#52514e" stroke-width="1.5"/>
+<path d="M 667.5 35.9 L 756.0 35.9 Q 760.0 35.9 760.0 39.9 L 760.0 53.9 Q 760.0 57.9 756.0 57.9 L 667.5 57.9 Z" fill="#fab219"/>
+<text x="770.0" y="50.9" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0182</text>
+<circle cx="14" cy="46.9" r="4.5" fill="#fab219"/>
+<text x="28" y="43.9" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb50 · 12 slices</text>
+<text x="28" y="59.9" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">unreplicated, single run</text>
+<path d="M 667.5 89.6 L 741.3 89.6 Q 745.3 89.6 745.3 93.6 L 745.3 107.6 Q 745.3 111.6 741.3 111.6 L 667.5 111.6 Z" fill="#0ca30c"/>
+<text x="755.3" y="104.6" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0153</text>
+<circle cx="14" cy="100.6" r="4.5" fill="#0ca30c"/>
+<text x="28" y="97.6" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb44/45 · slice order</text>
+<text x="28" y="113.6" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">replicated across 2 seeds</text>
+<path d="M 667.5 143.4 L 715.9 143.4 Q 719.9 143.4 719.9 147.4 L 719.9 161.4 Q 719.9 165.4 715.9 165.4 L 667.5 165.4 Z" fill="#0ca30c"/>
+<text x="729.9" y="158.4" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0103</text>
+<circle cx="14" cy="154.4" r="4.5" fill="#0ca30c"/>
+<text x="28" y="151.4" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb25 · attn. masking</text>
+<text x="28" y="167.4" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">held on public LB</text>
+<path d="M 667.5 197.1 L 710.3 197.1 Q 714.3 197.1 714.3 201.1 L 714.3 215.1 Q 714.3 219.1 710.3 219.1 L 667.5 219.1 Z" fill="#0ca30c"/>
+<text x="724.3" y="212.1" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0092</text>
+<circle cx="14" cy="208.1" r="4.5" fill="#0ca30c"/>
+<text x="28" y="205.1" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb34 · strong aug</text>
+<text x="28" y="221.1" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">held on public LB</text>
+<path d="M 667.5 250.9 L 707.2 250.9 Q 711.2 250.9 711.2 254.9 L 711.2 268.9 Q 711.2 272.9 707.2 272.9 L 667.5 272.9 Z" fill="#fab219"/>
+<text x="721.2" y="265.9" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0086</text>
+<circle cx="14" cy="261.9" r="4.5" fill="#fab219"/>
+<text x="28" y="258.9" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb49 · 320px res.</text>
+<text x="28" y="274.9" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">inconclusive, single run</text>
+<path d="M 667.5 304.6 L 673.7 304.6 Q 677.7 304.6 677.7 308.6 L 677.7 322.6 Q 677.7 326.6 673.7 326.6 L 667.5 326.6 Z" fill="#fab219"/>
+<text x="687.7" y="319.6" text-anchor="start" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">+0.0020</text>
+<circle cx="14" cy="315.6" r="4.5" fill="#fab219"/>
+<text x="28" y="312.6" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb48 · convnext_small</text>
+<text x="28" y="328.6" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">null, no real effect</text>
+<path d="M 649.1 358.4 L 667.5 358.4 L 667.5 380.4 L 649.1 380.4 Q 645.1 380.4 645.1 376.4 L 645.1 362.4 Q 645.1 358.4 649.1 358.4 Z" fill="#d03b3b"/>
+<text x="635.1" y="373.4" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">−0.0044</text>
+<circle cx="14" cy="369.4" r="4.5" fill="#d03b3b"/>
+<text x="28" y="366.4" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb38 · pos. encoding</text>
+<text x="28" y="382.4" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">falsified</text>
+<path d="M 283.1 412.1 L 667.5 412.1 L 667.5 434.1 L 283.1 434.1 Q 279.1 434.1 279.1 430.1 L 279.1 416.1 Q 279.1 412.1 283.1 412.1 Z" fill="#d03b3b"/>
+<text x="269.1" y="427.1" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="13" font-weight="600" fill="#0b0b0b">−0.0764</text>
+<circle cx="14" cy="423.1" r="4.5" fill="#d03b3b"/>
+<text x="28" y="420.1" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">nb41 · frozen DINOv2</text>
+<text x="28" y="436.1" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">worse overall</text>
+<circle cx="610" cy="16" r="4" fill="#0ca30c"/>
+<text x="622" y="20" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">replicated / held</text>
+<circle cx="610" cy="32" r="4" fill="#fab219"/>
+<text x="622" y="36" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">single run</text>
+<circle cx="610" cy="48" r="4" fill="#d03b3b"/>
+<text x="622" y="52" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#52514e">negative</text>
+</svg>

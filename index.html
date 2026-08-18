@@ -1,0 +1,993 @@
+<title>Knee MRI Noise Floor</title>
+<style>
+  :root {
+    --ground:      #F7FAFA;
+    --panel:       #FFFFFF;
+    --panel-2:     #EEF4F5;
+    --ink:         #0D1B1F;
+    --ink-soft:    #33474D;
+    --muted:       #5F7378;
+    --rule:        #D2E0E2;
+    --rule-strong: #B4C8CC;
+    --accent:      #0B7C8A;
+    --accent-soft: #E0F0F2;
+    --confirmed:   #9A6206;
+    --confirmed-bg:#F7EBD6;
+    --band:        rgba(11, 124, 138, 0.10);
+    --neg:         #8C4A3F;
+
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0B1417;
+      --panel:       #121F23;
+      --panel-2:     #16262B;
+      --ink:         #E7F0F1;
+      --ink-soft:    #B9CCD0;
+      --muted:       #8AA1A6;
+      --rule:        #23383D;
+      --rule-strong: #345057;
+      --accent:      #38B6C6;
+      --accent-soft: #10333A;
+      --confirmed:   #E2AA4C;
+      --confirmed-bg:#2E2413;
+      --band:        rgba(56, 182, 198, 0.13);
+      --neg:         #D08878;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0B1417;
+    --panel:       #121F23;
+    --panel-2:     #16262B;
+    --ink:         #E7F0F1;
+    --ink-soft:    #B9CCD0;
+    --muted:       #8AA1A6;
+    --rule:        #23383D;
+    --rule-strong: #345057;
+    --accent:      #38B6C6;
+    --accent-soft: #10333A;
+    --confirmed:   #E2AA4C;
+    --confirmed-bg:#2E2413;
+    --band:        rgba(56, 182, 198, 0.13);
+    --neg:         #D08878;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.62;
+    margin: 0;
+    padding: 0 24px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  /* ---- lab-notebook spine: narrative column + id gutter ---- */
+  .row {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 62ch);
+    gap: 0 28px;
+    justify-content: center;
+    /* explicit, not inherited - 62ch is measured against whatever font AND
+       size are active on THIS element. footer sets both font-family: mono
+       and font-size: 11.5px for its own caption text; either one inherited
+       here silently resizes this column. Pin both. */
+    font-family: var(--serif);
+    font-size: 17px;
+  }
+  .row + .row { margin-top: 30px; }
+  .gutter {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-align: right;
+    padding-top: 7px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+  .gutter span { display: block; }
+
+  /* ---- masthead ---- */
+  header.mast {
+    border-bottom: 1.5px solid var(--rule-strong);
+    padding: 64px 0 30px;
+    margin-bottom: 44px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 20px;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(38px, 6.4vw, 66px);
+    line-height: 1.02;
+    letter-spacing: -0.032em;
+    margin: 0 0 22px;
+    text-wrap: balance;
+    max-width: 17ch;
+  }
+  .standfirst {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 60ch;
+    text-wrap: balance;
+  }
+
+  /* ---- status strip ---- */
+  .status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 36px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .status div {
+    flex: 1 1 150px;
+    padding: 15px 18px;
+    border-right: 1px solid var(--rule);
+  }
+  .status div:last-child { border-right: none; }
+  .status dt {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 7px;
+  }
+  .status dd {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 25px;
+    letter-spacing: -0.02em;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .status dd small {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+
+  h2 {
+    font-family: var(--sans);
+    font-weight: 750;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.008em;
+    margin: 30px 0 10px;
+  }
+  p { margin: 0 0 17px; }
+  /* Always the second track, gutter present or not - a .row with only a
+     .body-col child would otherwise auto-place into the 84px gutter track
+     and every line would wrap to a single word. */
+  .body-col { grid-column: 2; }
+  .body-col > *:last-child { margin-bottom: 0; }
+
+  section { margin-top: 66px; }
+  .sec-mark {
+    border-top: 1.5px solid var(--rule-strong);
+    padding-top: 8px;
+  }
+  .sec-mark::before {
+    content: "";
+    display: block;
+    height: 5px;
+    background: var(--band);
+    margin: -9px 0 22px;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.87em;
+    background: var(--panel-2);
+    padding: 1.5px 5px;
+    border-radius: 2.5px;
+  }
+  strong { font-weight: 700; }
+  em.term { font-style: normal; font-family: var(--mono); font-size: 0.88em; color: var(--accent); }
+
+  /* ---- figures ---- */
+  figure { margin: 30px 0; }
+  figcaption {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-top: 14px;
+    max-width: 74ch;
+  }
+  .fig-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    margin: 0 0 20px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 26px 28px 22px;
+  }
+
+  /* ---- delta chart against the noise band ---- */
+  .chart { display: grid; gap: 9px; }
+  .crow {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr) 72px;
+    align-items: center;
+    gap: 14px;
+  }
+  .clabel {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.35;
+  }
+  .clabel b {
+    display: block;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .track {
+    position: relative;
+    height: 26px;
+    background: var(--panel-2);
+    border-radius: 2px;
+  }
+  .noiseband {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 52.5%; width: 28.33%;
+    background: var(--band);
+    border-left: 1px dashed var(--rule-strong);
+    border-right: 1px dashed var(--rule-strong);
+  }
+  .zero {
+    position: absolute;
+    top: -3px; bottom: -3px;
+    left: 66.667%;
+    width: 1.5px;
+    background: var(--rule-strong);
+  }
+  .bar {
+    position: absolute;
+    top: 6px; height: 14px;
+    background: var(--accent);
+    border-radius: 1.5px;
+    opacity: 0.5;
+  }
+  .bar.real { opacity: 1; background: var(--confirmed); }
+  .bar.negative { background: var(--neg); opacity: 0.6; }
+  .cval {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+  .cval.real { color: var(--confirmed); font-weight: 700; }
+  .axis {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr) 72px;
+    gap: 14px;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+  .axis-inner { position: relative; height: 15px; }
+  .axis-inner span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend i {
+    display: inline-block;
+    width: 22px; height: 9px;
+    border-radius: 1.5px;
+    margin-right: 7px;
+    vertical-align: middle;
+  }
+
+  /* ---- leaderboard bars ---- */
+  .lb { display: grid; gap: 7px; }
+  .lbrow {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr) 60px;
+    align-items: center;
+    gap: 14px;
+  }
+  .lbtrack { position: relative; height: 22px; background: var(--panel-2); border-radius: 2px; }
+  .lbbar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); opacity: 0.75; border-radius: 2px; }
+  .lbbar.pending { background: repeating-linear-gradient(135deg, var(--accent) 0 5px, transparent 5px 10px); opacity: 0.65; }
+  .lbbar.target { background: var(--confirmed); opacity: 0.32; }
+
+  /* ---- ledger table ---- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 12.5px; min-width: 620px; }
+  th {
+    text-align: left;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    padding: 13px 16px;
+    border-bottom: 1.5px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  td.id { color: var(--accent); font-weight: 700; letter-spacing: 0.03em; }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .tag.real { background: var(--confirmed-bg); color: var(--confirmed); }
+  .tag.null { background: var(--panel-2); color: var(--muted); }
+  .tag.dead { background: var(--panel-2); color: var(--neg); }
+
+  /* ---- pull quote / lesson ---- */
+  .lesson {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 3px 3px 0;
+  }
+  .lesson p { margin: 0; font-size: 17.5px; line-height: 1.5; }
+  .lesson p + p { margin-top: 12px; }
+
+  .note {
+    font-size: 15px;
+    color: var(--ink-soft);
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 22px 24px;
+  }
+  .note h3 { margin-top: 0; }
+  .note p:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 76px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  /* Targets the content directly rather than relying on inheritance from
+     footer - .row now pins its own font for grid-sizing (see .row), and an
+     explicit rule on the element itself always wins over an inherited one
+     regardless of the ancestor's specificity. */
+  footer .body-col {
+    font-family: var(--mono);
+    font-size: 11.5px;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 760px) {
+    body { font-size: 16px; padding: 0 18px 64px; }
+    .row { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .gutter {
+      text-align: left;
+      padding: 0 0 6px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 14px;
+    }
+    .gutter span { display: inline; margin-right: 10px; }
+    .crow, .axis { grid-template-columns: 84px minmax(0, 1fr) 60px; gap: 9px; }
+    .lbrow { grid-template-columns: 96px minmax(0, 1fr) 52px; gap: 9px; }
+    .clabel, .cval { font-size: 10.5px; }
+    .panel { padding: 20px 16px 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <p class="eyebrow">Kaggle &#183; RSNA Knee Abnormality Detection &#183; in progress</p>
+    <h1>Everything I measured was under the noise floor</h1>
+    <p class="standfirst">
+      Fifty-one experiments on a medical-imaging competition, most of which proved nothing.
+      This is a log of how the measurement discipline got built &#8212; and of the bug that
+      quietly invalidated two days of conclusions before anyone thought to check it.
+    </p>
+
+    <dl class="status">
+      <div>
+        <dt>Efficiency rank</dt>
+        <dd>115<small> / 1,184 &#183; pre-fix</small></dd>
+      </div>
+      <div>
+        <dt>Public AUC</dt>
+        <dd>0.862<small> &#183; ordered</small></dd>
+      </div>
+      <div>
+        <dt>Local val</dt>
+        <dd>0.863<small> &#183; 3 seeds</small></dd>
+      </div>
+      <div>
+        <dt>Closes</dt>
+        <dd>22 Oct<small> 2026</small></dd>
+      </div>
+    </dl>
+  </header>
+
+  <section>
+    <div class="row">
+      <div class="gutter"><span>SETUP</span></div>
+      <div class="body-col">
+        <h2>The task, and the constraint that shapes everything</h2>
+        <p>
+          The competition asks for twelve binary diagnoses from a knee MRI study &#8212; ACL and
+          meniscus tears, arthritis in three compartments, effusion, fracture, and others &#8212;
+          scored as macro-averaged ROC-AUC. There are <strong>4,407 training studies</strong>.
+        </p>
+        <p>
+          Only <strong>58 of them carry expert image-read labels</strong>. The other 4,349 have
+          labels that must be derived from free-text radiology reports written across nine
+          languages. So there are two problems stacked on each other: teach a model to read
+          knees, and first invent the labels to teach it with.
+        </p>
+        <p>
+          The 58 gold studies are also the only honest validation set. That is a very small
+          number to measure against, and nearly every mistake described below traces back to
+          forgetting it.
+        </p>
+        <h3>Why the Efficiency Track</h3>
+        <p>
+          A second prize track scores accuracy against runtime rather than accuracy alone.
+          At the published trade ratio, <strong>0.01 AUC is worth roughly twelve minutes</strong>
+          of notebook time. That reframes the problem: a fast, decent model can outrank a slow,
+          excellent one. Of the 1,184 entries on that board, 551 have a higher raw AUC than
+          this one and still rank worse.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>nb22</span><span>nb25</span></div>
+      <div class="body-col">
+        <h2>Discovering the noise floor</h2>
+        <p>
+          Two notebooks ran what was supposed to be the same configuration. One scored
+          <strong>0.8333</strong>. The control scored <strong>0.8164</strong>. Same architecture,
+          same data, same recipe &#8212; a gap of <strong>0.017</strong> from randomness alone.
+        </p>
+        <p>
+          That number is the most useful thing this project produced, because it retroactively
+          demolished a lot of earlier work. Ten experiments had moved the score by less than
+          0.017 and been recorded as findings. They were not findings. They were coin flips
+          written down as evidence.
+        </p>
+        <div class="lesson">
+          <p>
+            Everything after this point runs as a <strong>paired test</strong>: both arms in one
+            process, same seed, same seeded batch-order generator, so the only difference is the
+            variable under test. A result that does not clear 0.017 is reported as inconclusive
+            no matter how much it would be convenient to believe it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>nb42</span><span>nb43</span></div>
+      <div class="body-col">
+        <h2>The bug that was hiding under the null results</h2>
+        <p>
+          An ablation reversed the order of sagittal slices, expecting the medial and lateral
+          meniscus scores to move. The measured change was <strong>0.0021</strong> &#8212; nothing.
+          The conclusion recorded at the time: the architecture cannot perceive slice order.
+        </p>
+        <p>
+          Built on that conclusion, the next experiment added learned positional encodings to
+          tell the model where each slice sat. It cost <strong>0.0044</strong>. Recorded as a
+          clean falsification. Roughly three GPU-hours spent.
+        </p>
+        <p>
+          Both conclusions were wrong, for the same reason. DICOM filenames are SOP Instance
+          UIDs &#8212; assigned for uniqueness, not sequence. Every cache in the project had been
+          built by sorting files with <code>sorted(dir.glob("*.dcm"))</code>, which produces an
+          order uncorrelated with anatomy. Measured across 120 sampled series:
+        </p>
+
+        <figure>
+          <div class="panel">
+            <p class="fig-title">Filename order vs. true anatomical position</p>
+            <div class="chart">
+              <div class="crow">
+                <div class="clabel"><b>median |&#961;|</b>rank correlation</div>
+                <div class="track"><div class="zero" style="left:2%"></div><div class="bar" style="left:2%;width:9.9%"></div></div>
+                <div class="cval">0.111</div>
+              </div>
+              <div class="crow">
+                <div class="clabel"><b>correct</b>|&#961;| &gt; 0.9</div>
+                <div class="track"><div class="zero" style="left:2%"></div></div>
+                <div class="cval">0.0%</div>
+              </div>
+              <div class="crow">
+                <div class="clabel"><b>random</b>|&#961;| &lt; 0.3</div>
+                <div class="track"><div class="zero" style="left:2%"></div><div class="bar negative" style="left:2%;width:86.5%"></div></div>
+                <div class="cval">88.3%</div>
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            Not one series of 120 was correctly ordered by filename. The pipeline's
+            "six evenly spaced slices through the central 70%" was six arbitrary slices, and
+            each RGB triplet stacked three unrelated cross-sections into colour channels.
+          </figcaption>
+        </figure>
+
+        <p>
+          The fix reads the geometry the headers already carry: <em class="term">ImageOrientationPatient</em>
+          gives row and column direction cosines, their cross product is the slice normal, and
+          projecting <em class="term">ImagePositionPatient</em> onto that normal gives each slice's
+          true position along the stack. Sorting by that projection took the full-corpus rebuild
+          from 13 minutes to 34, and was verified by a correlation check built into the rebuild
+          itself: adjacent slices should look alike, distant ones should not.
+        </p>
+
+        <div class="lesson">
+          <p>
+            The lesson is not "check your DICOM ordering." It is that
+            <strong>a null result on an ablation should first raise the question of whether there
+            was anything there to ablate.</strong>
+          </p>
+          <p>
+            Reversing a random sequence yields another random sequence. The evidence for the bug
+            was sitting inside the first null result, two days before anyone read it that way.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>nb44</span><span>nb45</span><span>nb48&#8211;50</span></div>
+      <div class="body-col">
+        <h2>What survived replication</h2>
+        <p>
+          Every bar below is a paired test measured against the same 58 gold studies. The shaded
+          zone is the &#177;0.017 noise floor. Only results outside it mean anything, and only one of
+          these was run twice.
+        </p>
+      </div>
+    </div>
+
+    <figure>
+      <div class="panel">
+        <p class="fig-title">Macro-AUC change per experiment, against the noise floor</p>
+        <div class="chart">
+
+          <div class="crow">
+            <div class="clabel"><b>nb50</b>12 slices</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar" style="left:66.667%;width:15.17%"></div>
+            </div>
+            <div class="cval">+0.0182</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb45</b>slice order &#183; seed 1</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar real" style="left:66.667%;width:12.92%"></div>
+            </div>
+            <div class="cval real">+0.0155</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb44</b>slice order &#183; seed 0</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar real" style="left:66.667%;width:12.50%"></div>
+            </div>
+            <div class="cval real">+0.0150</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb49</b>320px resolution</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar" style="left:66.667%;width:7.17%"></div>
+            </div>
+            <div class="cval">+0.0086</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb36</b>sagittal reversal</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar" style="left:66.667%;width:1.75%"></div>
+            </div>
+            <div class="cval">+0.0021</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb48</b>convnext_small</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar" style="left:66.667%;width:1.67%"></div>
+            </div>
+            <div class="cval">+0.0020</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb38</b>positional encoding</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar negative" style="left:63.00%;width:3.67%"></div>
+            </div>
+            <div class="cval">&#8722;0.0044</div>
+          </div>
+
+          <div class="crow">
+            <div class="clabel"><b>nb41</b>frozen DINOv2</div>
+            <div class="track">
+              <div class="noiseband"></div><div class="zero"></div>
+              <div class="bar negative" style="left:3.00%;width:63.67%"></div>
+            </div>
+            <div class="cval">&#8722;0.0764</div>
+          </div>
+
+        </div>
+
+        <div class="axis">
+          <div></div>
+          <div class="axis-inner">
+            <span style="left:0%">&#8722;0.08</span>
+            <span style="left:33.333%">&#8722;0.04</span>
+            <span style="left:66.667%">0</span>
+            <span style="left:100%">+0.04</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="legend">
+          <span><i style="background:var(--confirmed)"></i>replicated across two seeds</span>
+          <span><i style="background:var(--accent);opacity:.5"></i>single run</span>
+          <span><i style="background:var(--band);border:1px dashed var(--rule-strong)"></i>&#177;0.017 noise floor</span>
+        </div>
+      </div>
+      <figcaption>
+        Only the slice-ordering fix was run twice. Its two seeds landed 0.0005 apart &#8212; the
+        replication, not either individual number, is what makes it credible. nb50 clears the
+        floor by 0.0012 on a single run, which is not the same thing.
+      </figcaption>
+    </figure>
+
+    <div class="row">
+      <div class="body-col">
+        <p>
+          The macro average also hides the most interesting result. <strong>Lateral Meniscus</strong>
+          had been stuck between 0.665 and 0.677 across every architecture, resolution, and
+          encoding tried. After the ordering fix it moved to <strong>0.815</strong> and
+          <strong>0.800</strong> on the two seeds &#8212; a jump roughly nine times larger than any
+          other target's, on the one structure most defined by its relationship to neighbouring
+          slices.
+        </p>
+        <p>
+          Two later experiments then pushed it back <em>down</em> while gaining elsewhere. That
+          contradiction is unresolved and is recorded as unresolved.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>LEDGER</span></div>
+      <div class="body-col">
+        <h2>The full ledger</h2>
+        <p>
+          Most entries are negative. That ratio is the honest shape of the work, and the
+          verdict column is deliberately stricter than the numbers alone would allow.
+        </p>
+      </div>
+    </div>
+
+    <figure>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Exp</th><th>Change tested</th><th class="num">&#916; macro</th><th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="id">nb44/45</td><td>Anatomical slice ordering</td>
+              <td class="num">+0.0150 / +0.0155</td><td><span class="tag real">replicated</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb50</td><td>12 slices per view</td>
+              <td class="num">+0.0182</td><td><span class="tag null">unreplicated</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb49</td><td>320px input resolution</td>
+              <td class="num">+0.0086</td><td><span class="tag null">inconclusive</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb48</td><td>convnext_small (50M params)</td>
+              <td class="num">+0.0020</td><td><span class="tag null">null</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb36</td><td>Sagittal order reversal</td>
+              <td class="num">+0.0021</td><td><span class="tag dead">confounded</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb38</td><td>Learned positional encoding</td>
+              <td class="num">&#8722;0.0044</td><td><span class="tag dead">falsified</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb41</td><td>Frozen DINOv2 backbone</td>
+              <td class="num">&#8722;0.0764</td><td><span class="tag dead">worse overall</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb34</td><td>Strong augmentation + view dropout</td>
+              <td class="num">+0.0092</td><td><span class="tag real">held on LB</span></td>
+            </tr>
+            <tr>
+              <td class="id">nb25</td><td>Attention masking for empty views</td>
+              <td class="num">+0.0103</td><td><span class="tag real">held on LB</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>
+        nb36 is marked confounded rather than null: it was measured on the broken cache, so it
+        tested nothing. nb48's null held up even after the ordering fix &#8212; capacity was never
+        the bottleneck.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>LABELS</span></div>
+      <div class="body-col">
+        <h2>Building labels that did not exist</h2>
+        <p>
+          With 4,349 studies labelled only by free-text reports in nine languages, the labels
+          themselves became a modelling problem. Agreement with the 58 gold studies, by method:
+        </p>
+      </div>
+    </div>
+
+    <figure>
+      <div class="panel">
+        <p class="fig-title">Label quality &#8212; agreement with expert image reads</p>
+        <div class="lb">
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>regex</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:47.4%"></div></div>
+            <div class="cval">0.804</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>Qwen3-4B</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:57.5%"></div></div>
+            <div class="cval">0.829</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>Qwen3-8B</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:63.8%"></div></div>
+            <div class="cval">0.844</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ ensemble</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:68.8%"></div></div>
+            <div class="cval">0.857</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ vision OOF</b></div>
+            <div class="lbtrack"><div class="lbbar real" style="width:96.0%;background:var(--confirmed);opacity:.85"></div></div>
+            <div class="cval real">0.905</div>
+          </div>
+        </div>
+        <div class="legend"><span>scale: 0.75 &#8594; 0.91 agreement</span></div>
+      </div>
+      <figcaption>
+        The useful finding: diversity beat capability. Doubling model size bought +0.015, but
+        adding a <em>differently wrong</em> extractor bought +0.031. An LLM "present" call proved
+        80% reliable when regex agreed with it and 44% when it did not &#8212; which is what the
+        sample weights were calibrated on.
+      </figcaption>
+    </figure>
+
+    <div class="row">
+      <div class="body-col">
+        <p>
+          The uncomfortable epilogue: pushing label quality from 0.857 to 0.905 moved the trained
+          model by less than the noise floor. The model was never label-limited. Roughly six
+          GPU-hours went into an improvement that was real and irrelevant.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>STANDING</span></div>
+      <div class="body-col">
+        <h2>Where it actually stands</h2>
+      </div>
+    </div>
+
+    <figure>
+      <div class="panel">
+        <p class="fig-title">Public leaderboard AUC by submission</p>
+        <div class="lb">
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>resnet18</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:12.4%"></div></div>
+            <div class="cval">0.731</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>convnext_tiny</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:45.2%"></div></div>
+            <div class="cval">0.813</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ ensemble</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:46.4%"></div></div>
+            <div class="cval">0.816</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ v3 labels</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:46.8%"></div></div>
+            <div class="cval">0.817</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ strong aug</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:54.4%"></div></div>
+            <div class="cval">0.836</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>+ slice order</b></div>
+            <div class="lbtrack"><div class="lbbar" style="width:64.8%;background:var(--confirmed);opacity:.85"></div></div>
+            <div class="cval" style="color:var(--confirmed);font-weight:700">0.862</div>
+          </div>
+          <div class="lbrow">
+            <div class="clabel" style="text-align:left"><b>prize range</b></div>
+            <div class="lbtrack"><div class="lbbar target" style="width:92%"></div></div>
+            <div class="cval">~0.93</div>
+          </div>
+        </div>
+        <div class="legend"><span>scale: 0.70 &#8594; 0.95 AUC</span></div>
+      </div>
+      <figcaption>
+        Three submissions in the middle moved the score by 0.004 combined. The slice-ordering fix
+        (0.836 &#8594; 0.862) is the single largest jump since the original architecture change &#8212;
+        confirmed on the actual hidden test set, not just the 58-study local holdout. The gap to
+        the efficiency prize range is now roughly 0.07, not the 0.09 it was two submissions ago.
+      </figcaption>
+    </figure>
+
+    <div class="row">
+      <div class="body-col">
+        <p>
+          The top of the efficiency board sits at 0.927&#8211;0.943 and moved several points in the
+          week these experiments ran. An earlier estimate in this project put the target at
+          ~0.88; that estimate was stale within days, and revising it upward was not optional.
+        </p>
+        <p>
+          The honest read: rank 115 of 1,184 was real for the 0.836 submission. The 0.862
+          resubmission should improve on that, but the efficiency board is ranked by a formula
+          that weighs runtime as heavily as accuracy, and the public snapshot used for ranking
+          had not caught up to this submission as of publish time &#8212; so the new rank is not
+          yet a number I have, not a number I am choosing not to show.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-mark">
+    <div class="row">
+      <div class="gutter"><span>METHOD</span></div>
+      <div class="body-col">
+        <h2>How this was built</h2>
+        <div class="note">
+          <h3>Attribution</h3>
+          <p>
+            The implementation &#8212; training loops, preprocessing, the ordering fix, the label
+            pipeline &#8212; was written by an AI coding agent (Claude Code) working under direction
+            across roughly fifty notebooks. The direction, strategy, and result review were mine:
+            choosing the Efficiency Track over the main board, deciding what to test next,
+            reading results, and pushing back when a claim outran its evidence.
+          </p>
+          <p>
+            That includes catching a stale leaderboard estimate being presented as current, which
+            is where the corrected ~0.93 target above came from. The agent-directed workflow is
+            the honest description of the method, and it seemed worth stating plainly rather than
+            leaving to inference.
+          </p>
+        </div>
+        <h3>Stack</h3>
+        <p style="font-family:var(--mono);font-size:13.5px;line-height:1.8;color:var(--ink-soft)">
+          PyTorch &#183; timm (ConvNeXt) &#183; pydicom &#183; NumPy / pandas<br>
+          Qwen3-4B &amp; 8B, run offline inside Kaggle for report labelling<br>
+          All training on Kaggle T4&#215;2 &#183; ~30 GPU-hours per week
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <div class="gutter"><span>&#8212;</span></div>
+      <div class="body-col">
+        RSNA Knee Abnormality Detection &#183; figures reflect runs through 16 August 2026 &#183;
+        competition closes 22 October 2026 &#183; all numbers from notebook logs, none estimated.
+        Efficiency-rank stat predates the 0.862 submission &#8212; the public leaderboard snapshot
+        used for ranking had not refreshed to include it as of publish time.
+      </div>
+    </div>
+  </footer>
+
+</div>
